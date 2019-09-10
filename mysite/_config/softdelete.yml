@@ -1,0 +1,16 @@
+---
+Name: softdelete
+After:
+  - 'framework/*'
+  - 'cms/*'
+---
+ModelAdmin:
+  softdelete_from_bulk: true
+  softdelete_from_list: true
+  extensions:
+    - SoftDeleteModelAdmin
+SecurityAdmin:
+  softdelete_from_bulk: true
+  softdelete_from_list: true
+  extensions:
+    - SoftDeleteSecurityAdmin

@@ -1,0 +1,36 @@
+---
+Name: mysite
+After:
+  - 'framework/*'
+  - 'cms/*'
+---
+# YAML configuration for SilverStripe
+# See http://doc.silverstripe.org/framework/en/topics/configuration
+# Caution: Indentation through two spaces, not tabs
+SSViewer:
+  theme: 'test-themes'
+SiteConfig:
+      extensions:
+        - SiteConfigExtension
+ModelAdmin:
+  softdelete_from_bulk: true
+  softdelete_from_list: true
+  extensions:
+    - SoftDeleteModelAdmin
+SecurityAdmin:
+  softdelete_from_bulk: true
+  softdelete_from_list: true
+  extensions:
+    - SoftDeleteSecurityAdmin
+---
+Only:
+  environment: dev
+---
+Email:
+  send_all_emails_to: 'me@example.com'
+---
+Except:
+  environment: dev
+---
+Email:
+  bcc_all_emails_to: 'me@example.com'
