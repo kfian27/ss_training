@@ -78,7 +78,10 @@ class ArticleHolder_Controller extends Page_Controller{
 		'EditDataKategori',
 		'TambahKategori',
 		'EditDataProperti',
-		'TambahProperti'
+		'TambahProperti',
+		'tampildataprovinsi',
+		'tampildatakota',
+		'tampilharga'
 	);
 	
 	protected $articleList;
@@ -270,6 +273,119 @@ class ArticleHolder_Controller extends Page_Controller{
 			$update->execute();
 			return "berhasil";
 		}
+	}
+	public function tampildataprovinsi(){
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://api.rajaongkir.com/starter/province",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_SSL_VERIFYPEER => false,
+		  CURLOPT_SSL_VERIFYHOST => 2,
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "GET",
+		  CURLOPT_HTTPHEADER => array(
+		    "key: eaae76f7c715edcbc3a0c363a82fb838"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$data = '<option selected disabled>-Pilih provinsi-</option>';
+		$datanya = json_decode($response);
+		// print_r($response);
+		foreach ($datanya as $key => $value) 
+		{		
+			foreach ($value as $valuenya => $valueakhir) {
+				foreach ($valueakhir as $valueakhir1 => $valueakhir2) {
+					if($valueakhir2->province != "" || $valueakhir2->province != null){
+						$data .= "<option value='$valueakhir2->province_id'>$valueakhir2->province</option>";
+					}
+				}
+			}
+		}
+		curl_close($curl);
+		return $data;
+	}
+	public function tampildatakota(){
+		$curl = curl_init();
+		$kotanya = $_POST['provinsinya'];
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://api.rajaongkir.com/starter/city?province=".$kotanya,
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "GET",
+		  CURLOPT_HTTPHEADER => array(
+		    "key: eaae76f7c715edcbc3a0c363a82fb838"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$data = '<option selected disabled>-Pilih Kota-</option>';
+		$datanya = json_decode($response);
+		foreach ($datanya as $key => $value) 
+		{		
+			foreach ($value as $valuenya => $valueakhir) {
+				foreach ($valueakhir as $valueakhir1 => $valueakhir2) {
+					if($valueakhir2->province != "" || $valueakhir2->province != null){
+						$data .= "<option value='$valueakhir2->city_id'>$valueakhir2->city_name</option>";
+					}
+				}
+			}
+		}
+		curl_close($curl);
+		return $data;
+	}
+	public function tampilharga(){
+		$curl = curl_init();
+		$asalnya = $_POST['asal'];
+		$tujuannya = $_POST['tujuan'];
+		$beratnya = $_POST['berat'];
+		$kurirnya = $_POST['kurir'];
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://api.rajaongkir.com/starter/cost",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => "origin=".$asalnya."&destination=".$tujuannya."&weight=".$beratnya."&courier=".$kurirnya,
+		  CURLOPT_HTTPHEADER => array(
+		    "content-type: application/x-www-form-urlencoded",
+		    "key: eaae76f7c715edcbc3a0c363a82fb838"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		// print_r($response);
+		$data = '<table width="100%" border="1"><tr>
+		<th>Tipe Pengiriman</th>
+		<th>Deskripsi</th>
+		<th>Harga</th>
+		</tr>';
+		$datanya = json_decode($response);
+		foreach ($datanya as $key => $value1) 
+		{		
+			foreach ($value1 as $valuenya => $valueakhir) {
+				foreach ($valueakhir as $valueakhir1 => $valueakhir2) {
+						// $data .= "<option value='$valueakhir2->city_id'>$valueakhir2->city_name</option>";
+						foreach ($valueakhir2 as $valueakhir3 => $valueakhir4) {
+							foreach ($valueakhir4 as $valueakhir5 => $valueakhir6) {
+								$data .= "<tr><td>".$valueakhir6->service."</td><td>".$valueakhir6->description."</td><td>".$valueakhir6->cost[0]->value."</td></tr>";
+							}
+						}
+				}
+			}
+		}
+		$data .= "</table>";
+		curl_close($curl);
+		return $data;
 	}
 	public function EditDataKategori(){
 		$result = Categorydata::get()->where("ID =".$_POST['editnya']);

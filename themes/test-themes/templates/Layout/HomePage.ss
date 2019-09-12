@@ -134,6 +134,43 @@
 							</div>
 							<% end_loop %>
 						</div>
+						<div class="col-md-6">
+							<div id="provinsi" style="display:none">
+							<label>Provinsi asal</label>
+								<select id="select_provinsi" class="form-control">
+									<option id="select_provinsi1"></option>
+								</select>
+							</div>
+							<div id="kota">
+							<label>Kota asal</label>
+								<select id="select_kota" class="form-control">
+									<option id="select_provinsi1"></option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div id="provinsi_tujuan" style="display:none">
+							<label>Provinsi tujuan</label>
+								<select id="select_provinsi_tujuan" class="form-control">
+									<option id="select_provinsi_tujuan"></option>
+								</select>
+							</div>
+							<div id="kota_tujuan">
+							<label>Kota tujuan</label>
+								<select id="select_kota_tujuan" class="form-control">
+									<option id="select_kota_tujuan"></option>
+								</select>
+							</div>
+						</div>
+						<select id="kurir" class="form-control">
+							<option value="jne">jne</option>
+							<option value="tiki">tiki</option>
+							<option value="pos">pos</option>
+						</select>
+						<input id="harganya" type="text" class="form-control" placeholder="berat dalam gram">
+						<button class="btn btn-info" onclick="javascript:test1();">Cek</button>
+						<div id="tampilharga">
+						</div>
 						<div class="row">
 							<div class="col-sm-12">
 								<h1 class="section-title">Data agen</h1>
@@ -619,5 +656,63 @@
 			        return false;
 			    });
 		    }
+		    function test1(){
+		    	var asal = $('#select_kota').val();
+		    	var tujuan = $('#select_kota_tujuan').val();
+		    	var berat = $('#harganya').val();
+		    	var kurir = $('#kurir').val();
+		        $.ajax({
+			       	url: 'travel-guides/tampilharga/',
+					type: 'POST',
+			       	data:  {'asal':asal,'tujuan':tujuan,'berat':berat,'kurir':kurir},
+			       	success: function(data){
+			        	$("#tampilharga").html(data);
+			        }
+			    }) 
+		    }
+		    $(document).ready(function() {
+		       $.ajax({
+		          url:'travel-guides/tampildataprovinsi/',
+		          type:"POST",
+		          success: function(data)
+		          {
+		          	 $("#select_provinsi").html(data);	
+		          	 $("#provinsi").show();	
+		          	 $("#select_provinsi").show();	
+		          	 $("#select_provinsi_chzn").hide();	
+		          	 $("#select_provinsi_tujuan").html(data);	
+		          	 $("#provinsi_tujuan").show();	
+		          	 $("#select_provinsi_tujuan").show();	
+		          	 $("#select_provinsi_tujuan_chzn").hide();	
+
+		          }
+		      	});
+		    });
+		    $('#select_provinsi').on('change', function() {
+		        var provinsinya = $(this).val();
+		        $.ajax({
+			       	url: 'travel-guides/tampildatakota/',
+					type: 'POST',
+			       	data:  {'provinsinya':provinsinya},
+			       	success: function(data){
+			        	$("#select_kota").html(data);
+			        	$("#select_kota").show();
+			        	$("#select_kota_chzn").hide();
+			        }
+			    })
+		    });
+		    $('#select_provinsi_tujuan').on('change', function() {
+		        var provinsinya = $(this).val();
+		        $.ajax({
+			       	url: 'travel-guides/tampildatakota/',
+					type: 'POST',
+			       	data:  {'provinsinya':provinsinya},
+			       	success: function(data){
+			        	$("#select_kota_tujuan").html(data);
+			        	$("#select_kota_tujuan").show();
+			        	$("#select_kota_tujuan_chzn").hide();
+			        }
+			    })
+		    });
 		</script>
 		
